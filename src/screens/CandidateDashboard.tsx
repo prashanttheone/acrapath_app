@@ -6,10 +6,16 @@ import { JobSearchForm } from '../components/search/JobSearchForm';
 import { useTheme } from '../theme/useTheme';
 import { useAuth } from '../app/provider/AuthProvider';
 import { Search, ChevronDown, ArrowLeft } from 'lucide-react-native';
+import { useAppSelector } from '../stores/hooks';
 
 export const CandidateDashboard = ({ navigation }: any) => {
   const { colors } = useTheme();
   const { user, logout } = useAuth();
+  const filters = useAppSelector((state) => state.jobFilter);
+
+  const displaySearchText = [...(filters.skills || []), filters.location]
+    .filter(Boolean)
+    .join(' • ');
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -29,6 +35,7 @@ export const CandidateDashboard = ({ navigation }: any) => {
           <Search size={16} color="#666" style={styles.searchIcon} />
           <TextInput
             placeholder="Search jobs here"
+            value={displaySearchText}
             style={styles.searchInput}
             placeholderTextColor="#666"
             editable={false}

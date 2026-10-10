@@ -3,6 +3,7 @@ import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../components/ui/Text';
 import { JobCard } from '../components/jobs/JobCard';
+import { JobCardSkeleton } from '../components/jobs/JobCardSkeleton';
 import { useAppDispatch, useAppSelector } from '../stores/hooks';
 import { useJobs } from '../hooks/useJobs';
 import { Search, Filter as FilterIcon, ArrowLeft } from 'lucide-react-native';
@@ -16,11 +17,15 @@ export const JobsListScreen = ({ navigation }: any) => {
   const jobCount = data?.pages?.[0]?.totalJobs || 0;
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading && jobs.length === 0) {
       return (
-        <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color="#147FF6" />
-        </View>
+        <FlatList
+          data={[1, 2, 3, 4, 5]}
+          keyExtractor={(item) => item.toString()}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+          renderItem={() => <JobCardSkeleton />}
+        />
       );
     }
     

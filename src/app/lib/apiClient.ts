@@ -8,8 +8,7 @@ import * as Keychain from 'react-native-keychain';
  * pass it to TanStack Query's useQuery for fetching (GET).
  */
 export const apiClient = axios.create({
-  // Hardcoding temporarily to bypass react-native-config cache issues
-  baseURL: 'https://uncoaxable-joetta-superimpersonal.ngrok-free.dev',
+  baseURL: Config.API_URL || 'https://acrapathapi.schooldb.in',
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
