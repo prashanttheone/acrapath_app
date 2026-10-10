@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, TextInput as RNTextInput } from 'react-native';
 import { TextInput } from '../ui/TextInput';
 import { Text } from '../ui/Text';
 import { Pill } from '../ui/Pill';
+import { useAppDispatch, useAppSelector } from '../../stores/hooks';
+import { updateJobPostData } from '../../stores/slices/jobPostSlice';
 
 const jobTypesRows = [
   ['Full-time', 'Freelance', 'Part-time'],
@@ -16,22 +18,35 @@ const perksRows = [
 ];
 
 export const Step1JobDetails = () => {
-  const [companyName, setCompanyName] = useState('');
-  const [jobTitle, setJobTitle] = useState('');
-  const [jobRole, setJobRole] = useState('');
-  const [selectedJobType, setSelectedJobType] = useState('Full-time');
-  const [selectedWorkMode, setSelectedWorkMode] = useState('Onsite');
-  const [minSalary, setMinSalary] = useState('');
-  const [maxSalary, setMaxSalary] = useState('');
-  const [isNightShift, setIsNightShift] = useState(false);
-  const [isNotDisclose, setIsNotDisclose] = useState(false);
-  const [selectedPerks, setSelectedPerks] = useState<string[]>(['Health Insurance']);
+  const dispatch = useAppDispatch();
+  const formData = useAppSelector((state) => state.jobPost);
+  const { companyName, jobTitle, jobRole, jobType, location, workMode, minSalary, maxSalary, isNightShift, isNotDisclose, perks } = formData;
+
+  const [showCustomPerkInput, setShowCustomPerkInput] = useState(false);
+  const [customPerk, setCustomPerk] = useState('');
+  const [addedCustomPerks, setAddedCustomPerks] = useState<string[]>([]);
+
+  const toggleJobType = (type: string) => {
+    if (jobType.includes(type)) dispatch(updateJobPostData({ jobType: jobType.filter(t => t !== type) }));
+    else dispatch(updateJobPostData({ jobType: [...jobType, type] }));
+  };
+
+  const toggleWorkMode = (mode: string) => {
+    if (workMode.includes(mode)) dispatch(updateJobPostData({ workMode: workMode.filter(m => m !== mode) }));
+    else dispatch(updateJobPostData({ workMode: [...workMode, mode] }));
+  };
 
   const togglePerk = (perk: string) => {
-    if (selectedPerks.includes(perk)) {
-      setSelectedPerks(selectedPerks.filter(p => p !== perk));
-    } else {
-      setSelectedPerks([...selectedPerks, perk]);
+    if (perks.includes(perk)) dispatch(updateJobPostData({ perks: perks.filter(p => p !== perk) }));
+    else dispatch(updateJobPostData({ perks: [...perks, perk] }));
+  };
+
+  const handleAddCustomPerk = () => {
+    if (customPerk.trim() && !addedCustomPerks.includes(customPerk.trim())) {
+      const newPerk = customPerk.trim();
+      setAddedCustomPerks([...addedCustomPerks, newPerk]);
+      dispatch(updateJobPostData({ perks: [...perks, newPerk] }));
+      setCustomPerk('');
     }
   };
 
@@ -44,14 +59,14 @@ export const Step1JobDetails = () => {
         label="Company Name *"
         placeholder="All India Institute of Occult Science"
         value={companyName}
-        onChangeText={setCompanyName}
+        onChangeText={(val) => dispatch(updateJobPostData({ companyName: val }))}
       />
 
       <TextInput
         label="Job Title / Designation *"
         placeholder="Eg. Performance Marketer"
         value={jobTitle}
-        onChangeText={setJobTitle}
+        onChangeText={(val) => dispatch(updateJobPostData({ jobTitle: val }))}
         showInfoIcon={true}
       />
 
@@ -59,14 +74,14 @@ export const Step1JobDetails = () => {
         label="Job Role *"
         placeholder="Eg. Performance Marketer"
         value={jobRole}
-        onChangeText={setJobRole}
+        onChangeText={(val) => dispatch(updateJobPostData({ jobRole: val }))}
         showInfoIcon={true}
       />
 
       <Text weight="medium" style={styles.sectionTitle}>Job Type *</Text>
       <TouchableOpacity 
         style={styles.checkboxRow}
-        onPress={() => setIsNightShift(!isNightShift)}
+        onPress={() => dispatch(updateJobPostData({ isNightShift: !isNightShift }))}
       >
         <View style={[styles.radioCircle, isNightShift && styles.radioCircleActive]}>
           {isNightShift && <View style={styles.radioInner} />}
@@ -80,8 +95,8 @@ export const Step1JobDetails = () => {
               <Pill
                 key={type}
                 label={type}
-                selected={selectedJobType === type}
-                onPress={() => setSelectedJobType(type)}
+                selected={jobType.includes(type)}
+                onPress={() => toggleJobType(type)}
               />
             ))}
           </View>
@@ -100,8 +115,8 @@ export const Step1JobDetails = () => {
             <Pill
               key={mode}
               label={mode}
-              selected={selectedWorkMode === mode}
-              onPress={() => setSelectedWorkMode(mode)}
+              selected={workMode.includes(mode)}
+              onPress={() => toggleWorkMode(mode)}
             />
           ))}
         </View>
@@ -114,7 +129,7 @@ export const Step1JobDetails = () => {
 
       <TouchableOpacity 
         style={styles.checkboxRow}
-        onPress={() => setIsNotDisclose(!isNotDisclose)}
+        onPress={() => dispatch(updateJobPostData({ isNotDisclose: !isNotDisclose }))}
       >
         <View style={[styles.radioCircle, isNotDisclose && styles.radioCircleActive]}>
           {isNotDisclose && <View style={styles.radioInner} />}
@@ -127,7 +142,7 @@ export const Step1JobDetails = () => {
           <TextInput
             placeholder="Minimum Salary"
             value={minSalary}
-            onChangeText={setMinSalary}
+            onChangeText={(val) => dispatch(updateJobPostData({ minSalary: val }))}
             keyboardType="numeric"
             style={{ paddingRight: 90 }}
             rightElement={
@@ -146,7 +161,7 @@ export const Step1JobDetails = () => {
           <TextInput
             placeholder="Maximum Salary"
             value={maxSalary}
-            onChangeText={setMaxSalary}
+            onChangeText={(val) => dispatch(updateJobPostData({ maxSalary: val }))}
             keyboardType="numeric"
             style={{ paddingRight: 90 }}
             rightElement={
@@ -172,7 +187,7 @@ export const Step1JobDetails = () => {
                 <Pill
                   key={uniqueKey}
                   label={perk}
-                  selected={selectedPerks.includes(perk)}
+                  selected={perks.includes(perk)}
                   onPress={() => togglePerk(perk)}
                   showActionIcon={true}
                 />
@@ -180,9 +195,41 @@ export const Step1JobDetails = () => {
             })}
           </View>
         ))}
+        {addedCustomPerks.length > 0 && (
+          <View style={styles.pillRow}>
+            {addedCustomPerks.map((perk, perkIndex) => (
+              <Pill
+                key={`custom-${perkIndex}`}
+                label={perk}
+                selected={perks.includes(perk)}
+                onPress={() => togglePerk(perk)}
+                showActionIcon={true}
+              />
+            ))}
+          </View>
+        )}
       </View>
 
-      <Text weight="medium" style={styles.linkText}>+ Add other perks</Text>
+      {!showCustomPerkInput ? (
+        <TouchableOpacity onPress={() => setShowCustomPerkInput(true)}>
+          <Text weight="medium" style={styles.linkText}>+ Add other perks</Text>
+        </TouchableOpacity>
+      ) : (
+        <View style={styles.customPerkContainer}>
+          <RNTextInput
+            style={styles.customPerkInput}
+            placeholder="Type custom perk..."
+            placeholderTextColor="#999"
+            value={customPerk}
+            onChangeText={setCustomPerk}
+            onSubmitEditing={handleAddCustomPerk}
+            returnKeyType="done"
+          />
+          <TouchableOpacity style={styles.addPerkButton} onPress={handleAddCustomPerk}>
+            <Text weight="medium" style={styles.addPerkText}>Add</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       
       {/* Footer space so scroll works well */}
       <View style={{ height: 100 }} />
@@ -296,4 +343,34 @@ const styles = StyleSheet.create({
     color: '#147FF6',
     fontSize: 14,
   },
+  customPerkContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  customPerkInput: {
+    flex: 1,
+    height: 48,
+    borderWidth: 1,
+    borderColor: '#E6E6E6',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#FFF',
+    fontSize: 14,
+    color: '#333',
+  },
+  addPerkButton: {
+    marginLeft: 12,
+    backgroundColor: '#0052FF',
+    paddingHorizontal: 16,
+    height: 48,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addPerkText: {
+    color: '#FFF',
+    fontSize: 14,
+  }
 });
