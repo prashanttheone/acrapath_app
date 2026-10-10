@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import jobPostReducer from './slices/jobPostSlice';
+import jobFilterReducer from './slices/jobFilterSlice';
 
 export const store = configureStore({
   reducer: {
     jobPost: jobPostReducer,
+    jobFilter: jobFilterReducer,
   },
 });
 

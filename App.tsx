@@ -13,22 +13,17 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    <PostHogProvider 
-      apiKey="phc_t8sYLHCCUPij9ouFk6zk576GMqHjowudUig2Sj6Cnmiy" 
-      options={{ host: "https://eu.i.posthog.com" }}
-    >
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <ReduxProvider store={store}>
-          <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-              <ThemeProvider>
-                <Main />
-              </ThemeProvider>
-            </AuthProvider>
-          </QueryClientProvider>
-        </ReduxProvider>
-      </GestureHandlerRootView>
-    </PostHogProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ReduxProvider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <ThemeProvider>
+              <Main />
+            </ThemeProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </ReduxProvider>
+    </GestureHandlerRootView>
   );
 }
 
