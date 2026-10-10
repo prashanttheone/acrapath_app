@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text as RNText, TextProps as RNTextProps, StyleSheet } from 'react-native';
-import { typography } from '../theme/typography';
-import { colors } from '../theme/colors';
+import { typography } from '../../theme/typography';
+import { colors } from '../../theme/colors';
 
 export interface TextProps extends RNTextProps {
   weight?: 'regular' | 'medium' | 'semiBold' | 'bold';
