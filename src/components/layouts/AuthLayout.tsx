@@ -1,6 +1,7 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, View, ScrollView, Image } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useTheme } from '../../theme/useTheme';
 import { Text } from '../ui/Text';
 
@@ -15,31 +16,33 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitl
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <KeyboardAvoidingView 
+      <KeyboardAwareScrollView
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        contentContainerStyle={styles.scrollContent}
+        bounces={false}
+        enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled"
+        extraScrollHeight={100}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent} bounces={false}>
-          <View style={styles.topBar}>
-            <Image 
-              source={require('../../../assets/acrapathlogo.png')} 
-              style={styles.logo}
-              resizeMode="contain"
-            />
-          </View>
-          <View style={styles.header}>
-            <Text weight="bold" style={styles.title}>{title}</Text>
-            {subtitle && (
-              <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-                {subtitle}
-              </Text>
-            )}
-          </View>
-          <View style={styles.body}>
-            {children}
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        <View style={styles.topBar}>
+          <Image
+            source={require('../../../assets/acrapathlogo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+        <View style={styles.header}>
+          <Text weight="bold" style={styles.title}>{title}</Text>
+          {subtitle && (
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+              {subtitle}
+            </Text>
+          )}
+        </View>
+        <View style={styles.body}>
+          {children}
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };

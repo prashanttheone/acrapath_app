@@ -69,10 +69,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input: {
+    height: 48,
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 14,
     fontSize: 16,
   },
   eyeIcon: {
