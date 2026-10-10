@@ -27,19 +27,15 @@ export const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
       <TextInput
         label="Password"
         placeholder="Enter your password"
-        secureTextEntry
+        isPassword
         value={password}
         onChangeText={setPassword}
       />
       
-      <TouchableOpacity style={styles.forgotPassword}>
-        <Text weight="medium" style={{ color: colors.primary }}>Forgot Password?</Text>
-      </TouchableOpacity>
-
       <Button 
         title="Sign In" 
         onPress={() => console.log('Login pressed')} 
-        style={styles.submitBtn} 
+        style={[styles.submitBtn, { marginTop: 16 }]} 
       />
 
       <View style={styles.footer}>
@@ -53,10 +49,6 @@ export const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 24,
-  },
   submitBtn: {
     marginBottom: 24,
   },

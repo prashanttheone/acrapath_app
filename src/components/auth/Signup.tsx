@@ -34,7 +34,7 @@ export const Signup: React.FC<{ navigation: any }> = ({ navigation }) => {
       <TextInput
         label="Password"
         placeholder="Create a password"
-        secureTextEntry
+        isPassword
         value={password}
         onChangeText={setPassword}
       />
