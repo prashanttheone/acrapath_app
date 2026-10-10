@@ -6,6 +6,7 @@ import { Button } from '../components/ui/Button';
 import { useTheme } from '../theme/useTheme';
 import { Step1JobDetails } from '../components/post_job/Step1JobDetails';
 import { Step2CandidatePreferences } from '../components/post_job/Step2CandidatePreferences';
+import { Step3JobDescription } from '../components/post_job/Step3JobDescription';
 import { Check } from 'lucide-react-native';
 
 export const PostJob: React.FC<{ navigation: any }> = ({ navigation }) => {
@@ -89,11 +90,7 @@ export const PostJob: React.FC<{ navigation: any }> = ({ navigation }) => {
         <View style={styles.content}>
           {currentStep === 1 && <Step1JobDetails />}
           {currentStep === 2 && <Step2CandidatePreferences />}
-          {currentStep === 3 && (
-            <View style={styles.placeholder}>
-              <Text>Step 3: Job Description (Coming Soon)</Text>
-            </View>
-          )}
+          {currentStep === 3 && <Step3JobDescription />}
         </View>
 
         {/* Bottom Actions */}
