@@ -21,14 +21,20 @@ export const CandidateDashboard = ({ navigation }: any) => {
           </View>
         </View>
 
-        <View style={styles.searchBar}>
+        <TouchableOpacity 
+          style={styles.searchBar}
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('SearchScreen')}
+        >
           <Search size={16} color="#666" style={styles.searchIcon} />
           <TextInput
             placeholder="Search jobs here"
             style={styles.searchInput}
             placeholderTextColor="#666"
+            editable={false}
+            pointerEvents="none"
           />
-        </View>
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.profileSection} onPress={logout}>
           <View style={styles.avatar}>
