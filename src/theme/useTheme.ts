@@ -1,10 +1,10 @@
-import { useColorScheme } from 'react-native';
-import { lightColors, darkColors } from './colors';
+import { useContext } from 'react';
+import { ThemeContext } from '../app/provider/ThemeProvider';
 
 export const useTheme = () => {
-  const isDark = useColorScheme() === 'dark';
-  return {
-    isDark,
-    colors: isDark ? darkColors : lightColors,
-  };
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
 };

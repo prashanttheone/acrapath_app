@@ -6,7 +6,7 @@ import { Button } from '../ui/Button';
 import { Text } from '../ui/Text';
 import { useTheme } from '../../theme/useTheme';
 
-export const Signup: React.FC<{ onToggleLogin: () => void }> = ({ onToggleLogin }) => {
+export const Signup: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,7 +47,7 @@ export const Signup: React.FC<{ onToggleLogin: () => void }> = ({ onToggleLogin 
 
       <View style={styles.footer}>
         <Text>Already have an account? </Text>
-        <TouchableOpacity onPress={onToggleLogin}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text weight="bold" style={{ color: colors.primary }}>Sign In</Text>
         </TouchableOpacity>
       </View>
