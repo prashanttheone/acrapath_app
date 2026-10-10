@@ -189,8 +189,9 @@ export const PostJob: React.FC<{ navigation: any }> = ({ navigation }) => {
           <Button 
             title="Back" 
             onPress={handleBack} 
-            style={[styles.btn, styles.backBtn, currentStep === 1 && { opacity: 0 }]} 
-            textStyle={{ color: colors.primary }} 
+            variant="outline"
+            textStyle={{ color: '#000000' }}
+            style={[styles.btn, currentStep === 1 && { opacity: 0 }]} 
             disabled={currentStep === 1 || isSubmitting}
           />
           <Button 
@@ -318,10 +319,5 @@ const styles = StyleSheet.create({
   },
   btn: {
     flex: 0.48,
-  },
-  backBtn: {
-    backgroundColor: '#FFF',
-    borderWidth: 1,
-    borderColor: '#2563EB',
   },
 });

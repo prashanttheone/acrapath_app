@@ -5,6 +5,7 @@ import { Text } from '../ui/Text';
 import { Pill } from '../ui/Pill';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { updateJobPostData } from '../../stores/slices/jobPostSlice';
+import { useTheme } from '../../theme/useTheme';
 
 const jobTypesRows = [
   ['Full-time', 'Freelance', 'Part-time'],
@@ -18,6 +19,7 @@ const perksRows = [
 ];
 
 export const Step1JobDetails = () => {
+  const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const formData = useAppSelector((state) => state.jobPost);
   const { companyName, jobTitle, jobRole, jobType, location, workMode, minSalary, maxSalary, isNightShift, isNotDisclose, perks } = formData;
@@ -147,7 +149,7 @@ export const Step1JobDetails = () => {
           style={styles.customPerkInput}
         />
         <TouchableOpacity 
-          style={styles.addPerkButton}
+          style={[styles.addPerkButton, { backgroundColor: colors.primary }]}
           onPress={handleAddLocation}
         >
           <Text style={styles.addPerkText}>Add</Text>
@@ -271,7 +273,7 @@ export const Step1JobDetails = () => {
             onSubmitEditing={handleAddCustomPerk}
             returnKeyType="done"
           />
-          <TouchableOpacity style={styles.addPerkButton} onPress={handleAddCustomPerk}>
+          <TouchableOpacity style={[styles.addPerkButton, { backgroundColor: colors.primary }]} onPress={handleAddCustomPerk}>
             <Text weight="medium" style={styles.addPerkText}>Add</Text>
           </TouchableOpacity>
         </View>
@@ -394,6 +396,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
     marginBottom: 16,
+    width: '100%',
   },
   customPerkInput: {
     flex: 1,
@@ -408,7 +411,6 @@ const styles = StyleSheet.create({
   },
   addPerkButton: {
     marginLeft: 12,
-    backgroundColor: '#0052FF',
     paddingHorizontal: 16,
     height: 48,
     borderRadius: 8,

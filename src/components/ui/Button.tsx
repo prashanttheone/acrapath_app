@@ -7,16 +7,23 @@ interface ButtonProps extends TouchableOpacityProps {
   title: string;
   loading?: boolean;
   textStyle?: StyleProp<TextStyle>;
+  variant?: 'solid' | 'outline';
 }
 
-export const Button: React.FC<ButtonProps> = ({ title, loading, style, textStyle, disabled, ...props }) => {
+export const Button: React.FC<ButtonProps> = ({ title, loading, style, textStyle, disabled, variant = 'solid', ...props }) => {
   const { colors } = useTheme();
+
+  const isOutline = variant === 'outline';
+  const backgroundColor = isOutline ? 'transparent' : colors.primary;
+  const textColor = isOutline ? colors.primary : colors.buttonText;
+  const borderColor = isOutline ? colors.primary : 'transparent';
+  const borderWidth = isOutline ? 1 : 0;
 
   return (
     <TouchableOpacity
       style={[
         styles.button,
-        { backgroundColor: colors.primary },
+        { backgroundColor, borderColor, borderWidth },
         disabled && styles.disabled,
         style,
       ]}
@@ -24,9 +31,9 @@ export const Button: React.FC<ButtonProps> = ({ title, loading, style, textStyle
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={colors.buttonText} />
+        <ActivityIndicator color={textColor} />
       ) : (
-        <Text weight="semiBold" style={[styles.text, { color: colors.buttonText }, textStyle]}>
+        <Text weight="semiBold" style={[styles.text, { color: textColor }, textStyle]}>
           {title}
         </Text>
       )}
