@@ -1,57 +1,19 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../components/ui/Text';
 import { JobCard } from '../components/jobs/JobCard';
 import { useAppDispatch, useAppSelector } from '../stores/hooks';
-import { setFilter, resetFilters } from '../stores/slices/jobFilterSlice';
 import { useJobs } from '../hooks/useJobs';
-
-const FILTER_CHIPS = [
-  { label: 'All', key: 'all' },
-  { label: 'Remote', key: 'location', value: 'Remote' },
-  { label: 'Full-time', key: 'job_type', value: 'Full-time' },
-  { label: '1-3 Yrs', key: 'experience', value: '1-3 Yrs' },
-  { label: 'Gurgaon', key: 'location', value: 'Gurgaon' },
-];
+import { Search, Filter as FilterIcon, ArrowLeft } from 'lucide-react-native';
 
 export const JobsListScreen = ({ navigation }: any) => {
   const dispatch = useAppDispatch();
   const filters = useAppSelector((state) => state.jobFilter);
-  const [activeChip, setActiveChip] = useState('all');
 
-  const { data, isLoading, isError, refetch } = useJobs(filters);
-
-  const handleFilterPress = (chip: any) => {
-    setActiveChip(chip.label);
-    if (chip.key === 'all') {
-      dispatch(resetFilters());
-    } else {
-      dispatch(resetFilters());
-      dispatch(setFilter({ [chip.key]: chip.value }));
-    }
-  };
-
-  const renderFilterChips = () => (
-    <View style={styles.filtersWrapper}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filtersScroll}>
-        {FILTER_CHIPS.map((chip, index) => {
-          const isActive = activeChip === chip.label;
-          return (
-            <TouchableOpacity 
-              key={index} 
-              style={[styles.chip, isActive && styles.chipActive]}
-              onPress={() => handleFilterPress(chip)}
-            >
-              <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
-                {chip.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
-    </View>
-  );
+  const { data, isLoading, isError, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } = useJobs(filters);
+  const jobs = data?.pages?.flatMap(page => page.jobs) || [];
+  const jobCount = data?.pages?.[0]?.totalJobs || 0;
 
   const renderContent = () => {
     if (isLoading) {
@@ -70,7 +32,7 @@ export const JobsListScreen = ({ navigation }: any) => {
       );
     }
 
-    const jobs = data?.jobs || [];
+    // jobs array is already extracted above
 
     if (jobs.length === 0) {
       return (
@@ -88,6 +50,19 @@ export const JobsListScreen = ({ navigation }: any) => {
         showsVerticalScrollIndicator={false}
         refreshing={isLoading}
         onRefresh={refetch}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View style={{ padding: 16 }}>
+              <ActivityIndicator size="small" color="#147FF6" />
+            </View>
+          ) : undefined
+        }
         renderItem={({ item }) => (
           <JobCard
             id={item._id}
@@ -108,10 +83,31 @@ export const JobsListScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <Text weight="bold" style={styles.headerTitle}>Recommended Jobs</Text>
+        <View style={styles.headerTop}>
+          <TouchableOpacity onPress={() => navigation.canGoBack() && navigation.goBack()} style={styles.backButton}>
+            <ArrowLeft size={24} color="#333" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.searchBar}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('SearchScreen')}
+          >
+            <Search size={18} color="#111" style={styles.searchIcon} />
+            <Text style={styles.searchText} numberOfLines={1}>
+              Marketing, Finance..., New Delhi, Pune
+            </Text>
+          </TouchableOpacity>
+        </View>
+        
+        <View style={styles.headerBottom}>
+          <Text weight="semiBold" style={styles.jobsCountText}>{jobCount} jobs</Text>
+          <TouchableOpacity style={styles.filterBtn}>
+            <Text weight="semiBold" style={styles.filterText}>Filter</Text>
+            <FilterIcon size={16} color="#147FF6" />
+          </TouchableOpacity>
+        </View>
       </View>
-      
-      {renderFilterChips()}
       
       {renderContent()}
     </SafeAreaView>
@@ -121,49 +117,63 @@ export const JobsListScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#F8F9FA',
   },
   header: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
     backgroundColor: '#FFF',
-  },
-  headerTitle: {
-    fontSize: 20,
-    color: '#333',
-  },
-  filtersWrapper: {
-    backgroundColor: '#FFF',
-    paddingBottom: 12,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
   },
-  filtersScroll: {
-    paddingHorizontal: 20,
-    gap: 8,
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  chip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#F5F5F5',
+  backButton: {
+    marginRight: 16,
+  },
+  searchBar: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 48,
+    backgroundColor: '#FFF',
     borderWidth: 1,
-    borderColor: '#EAEAEA',
+    borderColor: '#E6E6E6',
+    borderRadius: 24,
+    paddingHorizontal: 16,
   },
-  chipActive: {
-    backgroundColor: '#147FF6',
-    borderColor: '#147FF6',
+  searchIcon: {
+    marginRight: 8,
   },
-  chipText: {
+  searchText: {
+    flex: 1,
+    color: '#111',
     fontSize: 14,
-    color: '#666',
   },
-  chipTextActive: {
-    color: '#FFF',
-    fontWeight: '500',
+  headerBottom: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  jobsCountText: {
+    fontSize: 16,
+    color: '#444',
+  },
+  filterBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  filterText: {
+    color: '#147FF6',
+    fontSize: 15,
   },
   listContainer: {
-    padding: 24,
+    padding: 20,
   },
   centerContainer: {
     flex: 1,

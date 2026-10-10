@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { apiClient } from '../app/lib/apiClient';
 import { Endpoints } from '../app/lib/EndPoint';
 
@@ -34,10 +34,17 @@ export const fetchJobs = async (params: GetJobsParams) => {
   return data;
 };
 
-export const useJobs = (filters: GetJobsParams) => {
-  return useQuery({
+export const useJobs = (filters: Omit<GetJobsParams, 'page'>) => {
+  return useInfiniteQuery({
     queryKey: ['jobs', filters],
-    queryFn: () => fetchJobs(filters),
+    queryFn: ({ pageParam }) => fetchJobs({ ...filters, page: pageParam as number, limit: 10 }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.hasNextPage) {
+        return lastPage.currentPage + 1;
+      }
+      return undefined;
+    },
     staleTime: 60 * 1000, // 1 minute
   });
 };

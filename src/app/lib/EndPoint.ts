@@ -8,4 +8,9 @@ export const Endpoints = {
     getAll: '/api/jobs',
     getById: (id: string) => `/api/jobs/${id}`,
   },
+  search: {
+    suggestLocations: '/api/locations/suggest',
+    suggestSkills: '/api/skills/suggest',
+    suggestDesignations: '/api/designations/suggest',
+  },
 };
