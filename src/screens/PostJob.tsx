@@ -32,20 +32,33 @@ export const PostJob: React.FC<{ navigation: any }> = ({ navigation }) => {
 
     // Validation
     if (currentStep === 1) {
-      if (
-        !formData.companyName.trim() ||
-        !formData.jobTitle.trim() ||
-        !formData.jobRole.trim() ||
-        formData.jobType.length === 0 ||
-        formData.workMode.length === 0 ||
-        formData.perks.length === 0
-      ) {
-        showError();
+      const missing = [];
+      if (!(formData.companyName || '').trim()) missing.push('Company Name');
+      if (!(formData.jobTitle || '').trim()) missing.push('Job Title');
+      if (!(formData.jobRole || '').trim()) missing.push('Job Role');
+      if (!formData.jobType || formData.jobType.length === 0) missing.push('Job Type');
+      if (!formData.workMode || formData.workMode.length === 0) missing.push('Work Mode');
+      if (!formData.perks || formData.perks.length === 0) missing.push('Perks');
+      
+      if (missing.length > 0) {
+        if (Platform.OS === 'android') {
+          ToastAndroid.showWithGravity(`Missing: ${missing.join(', ')}`, ToastAndroid.LONG, ToastAndroid.TOP);
+        } else {
+          Alert.alert('Validation Error', `Missing fields: ${missing.join(', ')}`);
+        }
         return;
       }
     } else if (currentStep === 2) {
-      if (!formData.qualification.trim() || formData.skills.length === 0) {
-        showError();
+      const missing = [];
+      if (!(formData.qualification || '').trim()) missing.push('Qualification');
+      if (!formData.skills || formData.skills.length === 0) missing.push('Skills');
+
+      if (missing.length > 0) {
+        if (Platform.OS === 'android') {
+          ToastAndroid.showWithGravity(`Missing: ${missing.join(', ')}`, ToastAndroid.LONG, ToastAndroid.TOP);
+        } else {
+          Alert.alert('Validation Error', `Missing fields: ${missing.join(', ')}`);
+        }
         return;
       }
     }
