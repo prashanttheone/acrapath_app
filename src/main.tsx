@@ -8,7 +8,8 @@ import { Login } from './components/auth/Login';
 import { Signup } from './components/auth/Signup';
 import { Home } from './screens/Home';
 import { PostJob } from './screens/PostJob';
-import { CandidateDashboard } from './screens/CandidateDashboard';
+import { CandidateTabNavigator } from './navigation/CandidateTabNavigator';
+import { JobDetailsScreen } from './screens/JobDetailsScreen';
 import { useAuth } from './app/provider/AuthProvider';
 
 const Stack = createNativeStackNavigator();
@@ -39,7 +40,8 @@ export const Main = () => {
               </>
             ) : (
               <>
-                <Stack.Screen name="CandidateDashboard" component={CandidateDashboard} />
+                <Stack.Screen name="CandidateTabs" component={CandidateTabNavigator} />
+                <Stack.Screen name="JobDetails" component={JobDetailsScreen} />
               </>
             )
           ) : (
