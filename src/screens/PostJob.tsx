@@ -9,6 +9,8 @@ import { Step2CandidatePreferences } from '../components/post_job/Step2Candidate
 import { Step3JobDescription } from '../components/post_job/Step3JobDescription';
 import { Check } from 'lucide-react-native';
 import { useAppSelector } from '../stores/hooks';
+import { Endpoints } from '../app/lib/EndPoint';
+import { apiClient } from '../app/lib/apiClient';
 
 const JOB_STEPS = [
   { id: 1, label: 'Job Details' },
@@ -20,8 +22,9 @@ export const PostJob: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const { colors } = useTheme();
   const formData = useAppSelector((state) => state.jobPost);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const showError = () => {
       if (Platform.OS === 'android') {
         ToastAndroid.showWithGravity('Please fill all required fields marked with *', ToastAndroid.LONG, ToastAndroid.TOP);
@@ -66,10 +69,50 @@ export const PostJob: React.FC<{ navigation: any }> = ({ navigation }) => {
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Step 3 doesn't have required fields marked with * currently, but if there were we'd check them.
-      console.log('--- Submitting Job Post ---');
-      console.log(JSON.stringify(formData, null, 2));
+      submitJob();
+    }
+  };
+
+  const submitJob = async () => {
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        company_name: formData.companyName,
+        job_title: formData.jobTitle,
+        job_role: formData.jobRole,
+        job_type: formData.jobType,
+        location: formData.location,
+        work_mode: formData.workMode,
+        min_salary: formData.minSalary,
+        max_salary: formData.maxSalary,
+        is_not_disclose: formData.isNotDisclose,
+        is_night_shift: formData.isNightShift,
+        perks: formData.perks,
+        qualification: formData.qualification,
+        min_experience: formData.minExperience,
+        max_experience: formData.maxExperience,
+        skills: formData.skills,
+        job_description: formData.jobDescription,
+      };
+
+      await apiClient.post(Endpoints.jobs.create, payload);
+      
+      if (Platform.OS === 'android') {
+        ToastAndroid.showWithGravity('Job Posted Successfully!', ToastAndroid.LONG, ToastAndroid.TOP);
+      } else {
+        Alert.alert('Success', 'Job Posted Successfully!');
+      }
+      
       navigation.goBack();
+    } catch (error: any) {
+      console.error('Error posting job:', error.response?.data || error.message);
+      if (Platform.OS === 'android') {
+        ToastAndroid.showWithGravity('Failed to post job. Please try again.', ToastAndroid.LONG, ToastAndroid.TOP);
+      } else {
+        Alert.alert('Error', 'Failed to post job. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -146,13 +189,15 @@ export const PostJob: React.FC<{ navigation: any }> = ({ navigation }) => {
           <Button 
             title="Back" 
             onPress={handleBack} 
-            style={[styles.btn, styles.backBtn]} 
+            style={[styles.btn, styles.backBtn, currentStep === 1 && { opacity: 0 }]} 
             textStyle={{ color: colors.primary }} 
+            disabled={currentStep === 1 || isSubmitting}
           />
           <Button 
-            title={currentStep === 3 ? "Post Job" : "Next"} 
+            title={currentStep === 3 ? (isSubmitting ? "Posting..." : "Post Job") : "Next"} 
             onPress={handleNext} 
             style={[styles.btn]} 
+            disabled={isSubmitting}
           />
         </View>
       </KeyboardAvoidingView>
