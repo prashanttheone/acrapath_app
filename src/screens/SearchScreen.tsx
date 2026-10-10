@@ -1,23 +1,14 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, TextInput as RNTextInput } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../components/ui/Text';
-import { Button } from '../components/ui/Button';
 import { ArrowLeft } from 'lucide-react-native';
 import { useAuth } from '../app/provider/AuthProvider';
+import { JobSearchForm } from '../components/search/JobSearchForm';
 
 export const SearchScreen = ({ navigation }: any) => {
   const { user } = useAuth();
   const firstName = user?.full_name?.split(' ')[0] || 'There';
-  
-  const [skills, setSkills] = useState('');
-  const [locations, setLocations] = useState('');
-
-  const handleSearch = () => {
-    // Navigate back to the list and pass params, or dispatch to redux
-    // For now we just go back
-    navigation.goBack();
-  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -27,37 +18,13 @@ export const SearchScreen = ({ navigation }: any) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text weight="bold" style={styles.greeting}>Hey {firstName},</Text>
         <Text weight="medium" style={styles.subtitle}>Find your dream job</Text>
 
-        <View style={styles.inputsContainer}>
-          <View style={styles.inputWrapper}>
-            <RNTextInput
-              placeholder="Enter skills, designation"
-              placeholderTextColor="#999"
-              style={styles.input}
-              value={skills}
-              onChangeText={setSkills}
-            />
-          </View>
-          <View style={styles.inputWrapper}>
-            <RNTextInput
-              placeholder="Enter locations"
-              placeholderTextColor="#999"
-              style={styles.input}
-              value={locations}
-              onChangeText={setLocations}
-            />
-          </View>
-        </View>
+        <JobSearchForm onSearch={() => navigation.goBack()} />
 
-        <Button 
-          title="Search jobs" 
-          onPress={handleSearch}
-          style={styles.searchBtn}
-        />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -65,7 +32,7 @@ export const SearchScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F8F9FA', // Slight off-white background matching Figma
+    backgroundColor: '#F8F9FA',
   },
   header: {
     paddingHorizontal: 20,
@@ -87,6 +54,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 24,
+    paddingBottom: 40,
   },
   greeting: {
     fontSize: 16,
@@ -98,26 +66,4 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 32,
   },
-  inputsContainer: {
-    gap: 16,
-    marginBottom: 24,
-  },
-  inputWrapper: {
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E6E6E6',
-    height: 56,
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-  },
-  input: {
-    fontSize: 16,
-    color: '#333',
-    height: '100%',
-  },
-  searchBtn: {
-    height: 56,
-    borderRadius: 12,
-  }
 });

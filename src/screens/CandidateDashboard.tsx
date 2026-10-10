@@ -2,12 +2,12 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../components/ui/Text';
-import { Button } from '../components/ui/Button';
+import { JobSearchForm } from '../components/search/JobSearchForm';
 import { useTheme } from '../theme/useTheme';
 import { useAuth } from '../app/provider/AuthProvider';
 import { Search, ChevronDown, ArrowLeft } from 'lucide-react-native';
 
-export const CandidateDashboard = () => {
+export const CandidateDashboard = ({ navigation }: any) => {
   const { colors } = useTheme();
   const { user, logout } = useAuth();
 
@@ -23,8 +23,8 @@ export const CandidateDashboard = () => {
 
         <View style={styles.searchBar}>
           <Search size={16} color="#666" style={styles.searchIcon} />
-          <TextInput 
-            placeholder="Search jobs here" 
+          <TextInput
+            placeholder="Search jobs here"
             style={styles.searchInput}
             placeholderTextColor="#666"
           />
@@ -39,34 +39,12 @@ export const CandidateDashboard = () => {
       </View>
 
       <View style={styles.content}>
-        <TouchableOpacity style={styles.backButton}>
-          <ArrowLeft size={24} color="#333" />
-        </TouchableOpacity>
+
 
         <Text weight="semiBold" style={styles.greeting}>Hey {user?.full_name?.split(' ')[0] || 'Candidate'},</Text>
         <Text weight="bold" style={styles.title}>Find your dream job</Text>
 
-        <View style={styles.inputContainer}>
-          <TextInput 
-            placeholder="Enter skills, designation" 
-            style={styles.input}
-            placeholderTextColor="#666"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <TextInput 
-            placeholder="Enter locations" 
-            style={styles.input}
-            placeholderTextColor="#666"
-          />
-        </View>
-
-        <Button 
-          title="Search jobs" 
-          onPress={() => console.log('Searching jobs')} 
-          style={styles.searchBtn} 
-        />
+        <JobSearchForm onSearch={() => navigation.navigate('Jobs')} />
       </View>
     </SafeAreaView>
   );

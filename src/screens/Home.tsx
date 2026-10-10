@@ -4,31 +4,28 @@ import { MainLayout } from '../components/layouts/MainLayout';
 import { Button } from '../components/ui/Button';
 import { Text } from '../components/ui/Text';
 import { useAuth } from '../app/provider/AuthProvider';
+import { JobSearchForm } from '../components/search/JobSearchForm';
 
 export const Home: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { user, logout } = useAuth();
 
   return (
     <MainLayout title="Home" isHome>
-      <View style={styles.headerRow}>
-        <Text style={styles.welcomeText} numberOfLines={1}>
-          Good Morning, {user?.full_name?.split(' ')[0] || 'User'}...
+      <View style={styles.header}>
+        <Text weight="bold" style={styles.welcomeText}>
+          Welcome, {user?.full_name || 'User'}!
         </Text>
-        <Button 
-          title="Post Job" 
-          onPress={() => navigation.navigate('PostJob')} 
-          style={styles.postJobBtn} 
-          textStyle={styles.postJobBtnText}
-        />
+        <Text style={styles.roleText}>
+          Role: {user?.is_recruiter ? 'Recruiter' : 'Candidate'}
+        </Text>
       </View>
       
       <View style={styles.content}>
-        <Text style={styles.emailText}>
-          {user?.email}
-        </Text>
-        
+        <Text weight="bold" style={styles.subtitle}>Find your dream job</Text>
+
+        <JobSearchForm onSearch={() => navigation.navigate('Jobs')} />
+
         <View style={styles.spacer} />
-        
         <Button title="Log Out" onPress={logout} style={styles.logoutBtn} />
       </View>
     </MainLayout>
@@ -36,41 +33,38 @@ export const Home: React.FC<{ navigation: any }> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
+  header: {
+    padding: 24,
+    backgroundColor: '#FFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
   },
   welcomeText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    flex: 1,
-    marginRight: 16,
+    fontSize: 24,
+    color: '#333',
+    marginBottom: 8,
   },
-  postJobBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    minHeight: 0,
-  },
-  postJobBtnText: {
-    fontSize: 14,
+  roleText: {
+    fontSize: 16,
+    color: '#666',
+    textTransform: 'capitalize',
   },
   content: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 24,
   },
-  emailText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+  subtitle: {
+    fontSize: 22,
+    color: '#333',
+    marginBottom: 20,
   },
   spacer: {
-    height: 48,
+    height: 32,
   },
   logoutBtn: {
     backgroundColor: '#EF4444',
+    marginTop: 'auto',
+    marginBottom: 24,
   },
 });

@@ -10,7 +10,6 @@ export const Endpoints = {
   },
   search: {
     suggestLocations: '/api/locations/suggest',
-    suggestSkills: '/api/skills/suggest',
-    suggestDesignations: '/api/designations/suggest',
+    suggestKeyword: '/api/keywords/suggest',
   },
 };
