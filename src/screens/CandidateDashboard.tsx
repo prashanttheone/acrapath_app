@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, TextInput, Modal, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../components/ui/Text';
 import { JobSearchForm } from '../components/search/JobSearchForm';
@@ -23,12 +23,14 @@ export const CandidateDashboard = ({ navigation }: any) => {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.logoPlaceholder}>
-          <View style={styles.logoIcon}>
-            <Text weight="bold" style={styles.logoText}>A</Text>
-          </View>
+          <Image
+            source={require('../../assets/logo.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.searchBar}
           activeOpacity={0.8}
           onPress={() => navigation.navigate('SearchScreen')}
@@ -45,9 +47,11 @@ export const CandidateDashboard = ({ navigation }: any) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.profileSection} onPress={() => setProfileModalVisible(true)}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{(user?.full_name || 'U').charAt(0)}</Text>
-          </View>
+          <Image
+            source={require('../../assets/profile.png')}
+            style={styles.profileImage}
+            resizeMode="cover"
+          />
           <ChevronDown size={16} color="#333" />
         </TouchableOpacity>
       </View>
@@ -68,15 +72,15 @@ export const CandidateDashboard = ({ navigation }: any) => {
         animationType="fade"
         onRequestClose={() => setProfileModalVisible(false)}
       >
-        <TouchableOpacity 
-          style={styles.modalOverlay} 
-          activeOpacity={1} 
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
           onPress={() => setProfileModalVisible(false)}
         >
           <View style={styles.dropdownMenu}>
             {user?.is_recruiter && (
               <>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.menuItem}
                   onPress={() => {
                     setProfileModalVisible(false);
@@ -89,7 +93,7 @@ export const CandidateDashboard = ({ navigation }: any) => {
               </>
             )}
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.menuItem}
               onPress={() => {
                 setProfileModalVisible(false);
@@ -121,18 +125,12 @@ const styles = StyleSheet.create({
   },
   logoPlaceholder: {
     marginRight: 16,
-  },
-  logoIcon: {
-    width: 32,
-    height: 32,
-    backgroundColor: '#0052FF',
-    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  logoText: {
-    color: '#FFF',
-    fontSize: 20,
+  logoImage: {
+    width: 48,
+    height: 48,
   },
   searchBar: {
     flex: 1,
@@ -159,19 +157,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  avatar: {
+  profileImage: {
     width: 32,
     height: 32,
-    borderRadius: 16,
-    backgroundColor: '#666',
-    justifyContent: 'center',
-    alignItems: 'center',
     marginRight: 4,
-  },
-  avatarText: {
-    color: '#FFF',
-    fontSize: 14,
-    fontWeight: 'bold',
   },
   content: {
     flex: 1,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Modal, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../components/ui/Button';
 import { Text } from '../components/ui/Text';
@@ -23,17 +23,22 @@ export const Home: React.FC<{ navigation: any }> = ({ navigation }) => {
           <TouchableOpacity style={styles.iconButton}>
             <Menu size={24} color="#333" />
           </TouchableOpacity>
-          <View style={styles.logoPlaceholder}>
-            <Text weight="bold" style={styles.logoText}>A</Text>
-          </View>
-          <Text weight="semiBold" style={styles.brandText}>Acrapath</Text>
+          <Image 
+            source={require('../../assets/acrapathlogo.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </View>
 
         <TouchableOpacity 
           style={styles.profileSection} 
           onPress={() => setProfileModalVisible(true)}
         >
-          <User size={24} color="#666" />
+          <Image 
+            source={require('../../assets/profile.png')}
+            style={styles.profileImage}
+            resizeMode="cover"
+          />
           <ChevronDown size={16} color="#666" style={{ marginLeft: 4 }} />
         </TouchableOpacity>
       </View>
@@ -113,27 +118,20 @@ const styles = StyleSheet.create({
   iconButton: {
     marginRight: 16,
   },
-  logoPlaceholder: {
-    width: 24,
-    height: 24,
-    backgroundColor: '#147FF6',
-    borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
-  },
-  logoText: {
-    color: '#FFF',
-    fontSize: 14,
-  },
-  brandText: {
-    fontSize: 18,
-    color: '#147FF6',
+  logoImage: {
+    width: 110,
+    height: 28,
+    marginLeft: 4,
   },
   profileSection: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 4,
+  },
+  profileImage: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
   },
   content: {
     flex: 1,

@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../components/ui/Text';
 import { JobCard } from '../components/jobs/JobCard';
 import { JobCardSkeleton } from '../components/jobs/JobCardSkeleton';
 import { useAppDispatch, useAppSelector } from '../stores/hooks';
+import { setFilter } from '../stores/slices/jobFilterSlice';
 import { useJobs } from '../hooks/useJobs';
-import { Search, Filter as FilterIcon, ArrowLeft } from 'lucide-react-native';
+import { Search, Filter as FilterIcon, ArrowLeft, X } from 'lucide-react-native';
 
 export const JobsListScreen = ({ navigation }: any) => {
   const dispatch = useAppDispatch();
   const filters = useAppSelector((state) => state.jobFilter);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+
+  const displaySearchText = [...(filters.skills || []), filters.location]
+    .filter(Boolean)
+    .join(' • ') || 'Search jobs here';
 
   const { data, isLoading, isError, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } = useJobs(filters);
   const jobs = data?.pages?.flatMap(page => page.jobs) || [];
@@ -100,14 +106,14 @@ export const JobsListScreen = ({ navigation }: any) => {
           >
             <Search size={18} color="#111" style={styles.searchIcon} />
             <Text style={styles.searchText} numberOfLines={1}>
-              Marketing, Finance..., New Delhi, Pune
+              {displaySearchText}
             </Text>
           </TouchableOpacity>
         </View>
         
         <View style={styles.headerBottom}>
           <Text weight="semiBold" style={styles.jobsCountText}>{jobCount} jobs</Text>
-          <TouchableOpacity style={styles.filterBtn}>
+          <TouchableOpacity style={styles.filterBtn} onPress={() => setFilterModalVisible(true)}>
             <Text weight="semiBold" style={styles.filterText}>Filter</Text>
             <FilterIcon size={16} color="#147FF6" />
           </TouchableOpacity>
@@ -115,6 +121,38 @@ export const JobsListScreen = ({ navigation }: any) => {
       </View>
       
       {renderContent()}
+
+      <Modal
+        visible={filterModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setFilterModalVisible(false)}
+      >
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setFilterModalVisible(false)}>
+          <View style={styles.bottomSheet} onStartShouldSetResponder={() => true}>
+            <View style={styles.sheetHeader}>
+              <Text weight="bold" style={styles.sheetTitle}>Filters</Text>
+              <TouchableOpacity onPress={() => setFilterModalVisible(false)}>
+                <X size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.sheetContent}>
+              <Text style={{ color: '#666', marginBottom: 20 }}>More filter options coming soon!</Text>
+              
+              <TouchableOpacity 
+                style={styles.clearFilterBtn}
+                onPress={() => {
+                  dispatch(setFilter({ skills: [], location: '' }));
+                  setFilterModalVisible(false);
+                }}
+              >
+                <Text weight="semiBold" style={styles.clearFilterText}>Clear All Filters</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -193,5 +231,42 @@ const styles = StyleSheet.create({
   emptyText: {
     color: '#666',
     fontSize: 15,
-  }
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
+  bottomSheet: {
+    backgroundColor: '#FFF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    minHeight: 250,
+  },
+  sheetHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  sheetTitle: {
+    fontSize: 18,
+    color: '#000',
+  },
+  sheetContent: {
+    flex: 1,
+  },
+  clearFilterBtn: {
+    backgroundColor: '#FEE2E2',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 'auto',
+    marginBottom: 20,
+  },
+  clearFilterText: {
+    color: '#EF4444',
+    fontSize: 16,
+  },
 });
