@@ -8,3 +8,16 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+
+# React Native
+-keep class com.facebook.react.** { *; }
+-keepclassmembers class * extends com.facebook.react.bridge.ReactContextBaseJavaModule {
+    @com.facebook.react.bridge.ReactMethod *;
+}
+-keepclassmembers class * extends com.facebook.react.bridge.JSInstance {
+    <init>(...);
+}
+-keepclassmembers class * extends com.facebook.react.bridge.NativeModule {
+    <init>(...);
+}
+-dontwarn com.facebook.react.**
