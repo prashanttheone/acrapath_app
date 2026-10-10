@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../components/ui/Text';
 import { JobSearchForm } from '../components/search/JobSearchForm';
@@ -10,7 +10,8 @@ import { useAppSelector } from '../stores/hooks';
 
 export const CandidateDashboard = ({ navigation }: any) => {
   const { colors } = useTheme();
-  const { user, logout } = useAuth();
+  const { user, logout, switchRole } = useAuth();
+  const [profileModalVisible, setProfileModalVisible] = React.useState(false);
   const filters = useAppSelector((state) => state.jobFilter);
 
   const displaySearchText = [...(filters.skills || []), filters.location]
@@ -43,7 +44,7 @@ export const CandidateDashboard = ({ navigation }: any) => {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.profileSection} onPress={logout}>
+        <TouchableOpacity style={styles.profileSection} onPress={() => setProfileModalVisible(true)}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>{(user?.full_name || 'U').charAt(0)}</Text>
           </View>
@@ -59,6 +60,47 @@ export const CandidateDashboard = ({ navigation }: any) => {
 
         <JobSearchForm onSearch={() => navigation.navigate('Jobs')} />
       </View>
+
+      {/* Profile Modal */}
+      <Modal
+        visible={profileModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setProfileModalVisible(false)}
+      >
+        <TouchableOpacity 
+          style={styles.modalOverlay} 
+          activeOpacity={1} 
+          onPress={() => setProfileModalVisible(false)}
+        >
+          <View style={styles.dropdownMenu}>
+            {user?.is_recruiter && (
+              <>
+                <TouchableOpacity 
+                  style={styles.menuItem}
+                  onPress={() => {
+                    setProfileModalVisible(false);
+                    switchRole('recruiter');
+                  }}
+                >
+                  <Text style={styles.menuItemText}>Switch to Employer Mode</Text>
+                </TouchableOpacity>
+                <View style={styles.divider} />
+              </>
+            )}
+
+            <TouchableOpacity 
+              style={styles.menuItem}
+              onPress={() => {
+                setProfileModalVisible(false);
+                logout();
+              }}
+            >
+              <Text style={[styles.menuItemText, { color: '#EF4444' }]}>Log Out</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -166,5 +208,36 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 12,
     backgroundColor: '#007AFF',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#F0F0F0',
+    marginVertical: 4,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.1)',
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    top: 60,
+    right: 16,
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 8,
+    minWidth: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  menuItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  menuItemText: {
+    fontSize: 15,
+    color: '#333',
   },
 });

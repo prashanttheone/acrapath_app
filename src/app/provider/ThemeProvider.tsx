@@ -11,15 +11,15 @@ type ThemeContextType = {
 export const ThemeContext = createContext<ThemeContextType>({
   isDark: false,
   colors: lightColors,
-  setTheme: () => {},
+  setTheme: () => { },
 });
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const systemColorScheme = useColorScheme();
   const [themeSetting, setThemeSetting] = useState<'light' | 'dark' | 'system'>('system');
 
-  const isDark = themeSetting === 'light' 
-    ? systemColorScheme === 'dark' 
+  const isDark = themeSetting === 'light'
+    ? systemColorScheme === 'dark'
     : themeSetting === 'dark';
 
   const colors = isDark ? darkColors : lightColors;

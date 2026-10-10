@@ -18,7 +18,7 @@ const Stack = createNativeStackNavigator();
 
 export const Main = () => {
   const { isDark } = useTheme();
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, activeRole } = useAuth();
 
   if (isLoading) {
     return null; // Could be a splash screen
@@ -47,7 +47,7 @@ export const Main = () => {
             }}
           >
             {isAuthenticated ? (
-              user?.is_recruiter ? (
+              activeRole === 'recruiter' ? (
                 <>
                   <Stack.Screen name="Home" component={Home} />
                   <Stack.Screen name="PostJob" component={PostJob} />

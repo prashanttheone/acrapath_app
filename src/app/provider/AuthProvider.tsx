@@ -13,6 +13,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: UserData | null;
+  activeRole: 'recruiter' | 'candidate';
+  switchRole: (role: 'recruiter' | 'candidate') => void;
   login: (token: string, user: UserData) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -22,6 +24,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
+  const [activeRole, setActiveRole] = useState<'recruiter' | 'candidate'>('candidate');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -34,6 +37,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (credentials.username !== 'auth_token') {
               const userData = JSON.parse(credentials.username);
               setUser(userData);
+              if (userData.is_recruiter) {
+                setActiveRole('recruiter');
+              }
             }
           } catch (err) {
             console.error('Failed to parse user data from keychain', err);
@@ -54,6 +60,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await Keychain.setGenericPassword(JSON.stringify(userData), token);
       setUser(userData);
       setIsAuthenticated(true);
+      if (userData.is_recruiter) {
+        setActiveRole('recruiter');
+      } else {
+        setActiveRole('candidate');
+      }
     } catch (e) {
       console.error('Keychain save error:', e);
     }
@@ -69,8 +80,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const switchRole = (role: 'recruiter' | 'candidate') => {
+    setActiveRole(role);
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, user, activeRole, switchRole, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
