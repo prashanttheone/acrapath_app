@@ -3,6 +3,11 @@ import { View, StyleSheet, ScrollView, TouchableOpacity, TextInput as RNTextInpu
 import { Text } from '../ui/Text';
 import { Pill } from '../ui/Pill';
 import { ChevronDown, Star, X } from 'lucide-react-native';
+import { useAppDispatch, useAppSelector } from '../../stores/hooks';
+import { updateJobPostData } from '../../stores/slices/jobPostSlice';
+import { Dropdown } from 'react-native-element-dropdown';
+
+const EXP_OPTIONS = Array.from({ length: 11 }, (_, i) => ({ label: `${i} Years`, value: String(i) }));
 
 const qualificationsRows = [
   ['12th Pass', 'Diploma', 'Graduate'],
@@ -15,23 +20,24 @@ const suggestionsList = [
 ];
 
 export const Step2CandidatePreferences = () => {
-  const [selectedQualification, setSelectedQualification] = useState('');
-  const [selectedSkills, setSelectedSkills] = useState<string[]>(['Performance Marketing', 'SEO', 'Google Analytics', 'Social Media']);
+  const dispatch = useAppDispatch();
+  const { qualification, minExperience, maxExperience, skills } = useAppSelector((state) => state.jobPost);
+
   const [skillInput, setSkillInput] = useState('');
 
   const toggleSuggestion = (skill: string) => {
-    if (!selectedSkills.includes(skill)) {
-      setSelectedSkills([...selectedSkills, skill]);
+    if (!skills.includes(skill)) {
+      dispatch(updateJobPostData({ skills: [...skills, skill] }));
     }
   };
 
   const removeSkill = (indexToRemove: number) => {
-    setSelectedSkills(selectedSkills.filter((_, index) => index !== indexToRemove));
+    dispatch(updateJobPostData({ skills: skills.filter((_, index) => index !== indexToRemove) }));
   };
 
   const handleAddSkill = () => {
-    if (skillInput.trim() && !selectedSkills.includes(skillInput.trim())) {
-      setSelectedSkills([...selectedSkills, skillInput.trim()]);
+    if (skillInput.trim() && !skills.includes(skillInput.trim())) {
+      dispatch(updateJobPostData({ skills: [...skills, skillInput.trim()] }));
       setSkillInput('');
     }
   };
@@ -50,8 +56,8 @@ export const Step2CandidatePreferences = () => {
               <Pill
                 key={qual}
                 label={qual}
-                selected={selectedQualification === qual}
-                onPress={() => setSelectedQualification(qual)}
+                selected={qualification === qual}
+                onPress={() => dispatch(updateJobPostData({ qualification: qual }))}
               />
             ))}
           </View>
@@ -61,25 +67,51 @@ export const Step2CandidatePreferences = () => {
       {/* Work Experience */}
       <Text weight="medium" style={styles.sectionTitle}>Work Experience</Text>
       <View style={styles.row}>
-        <TouchableOpacity style={styles.dropdownBox}>
-          <Text style={styles.dropdownText}>Minimum Exp</Text>
-          <ChevronDown size={16} color="#666" />
-        </TouchableOpacity>
-        
+        <Dropdown
+          style={styles.dropdownBox}
+          placeholderStyle={styles.dropdownText}
+          selectedTextStyle={styles.dropdownSelectedText}
+          containerStyle={styles.dropdownContainer}
+          itemTextStyle={styles.dropdownItemText}
+          data={EXP_OPTIONS}
+          maxHeight={200}
+          labelField="label"
+          valueField="value"
+          placeholder="Minimum Exp"
+          value={minExperience}
+          onChange={item => {
+            dispatch(updateJobPostData({ minExperience: item.value }));
+          }}
+          renderRightIcon={() => <ChevronDown size={16} color="#666" />}
+        />
+
         <Text style={styles.toText}>to</Text>
-        
-        <TouchableOpacity style={styles.dropdownBox}>
-          <Text style={styles.dropdownText}>Maximum Exp</Text>
-          <ChevronDown size={16} color="#666" />
-        </TouchableOpacity>
+
+        <Dropdown
+          style={styles.dropdownBox}
+          placeholderStyle={styles.dropdownText}
+          selectedTextStyle={styles.dropdownSelectedText}
+          containerStyle={styles.dropdownContainer}
+          itemTextStyle={styles.dropdownItemText}
+          data={EXP_OPTIONS}
+          maxHeight={200}
+          labelField="label"
+          valueField="value"
+          placeholder="Max Exp.."
+          value={maxExperience}
+          onChange={item => {
+            dispatch(updateJobPostData({ maxExperience: item.value }));
+          }}
+          renderRightIcon={() => <ChevronDown size={16} color="#666" />}
+        />
       </View>
 
       {/* Add Skills */}
       <Text weight="medium" style={styles.sectionTitle}>Add Skills *</Text>
-      
+
       <View style={styles.skillsInputContainer}>
         <View style={styles.selectedSkillsWrapper}>
-          {selectedSkills.map((skill, index) => (
+          {skills.map((skill, index) => (
             <View key={`skill-${index}`} style={styles.skillTag}>
               <Star size={12} color="#B3B3B3" style={{ marginRight: 4 }} />
               <Text style={styles.skillTagText}>{skill}</Text>
@@ -116,6 +148,8 @@ export const Step2CandidatePreferences = () => {
       </View>
 
       {/* Padding at bottom for scroll */}
+      <View style={{ height: 100 }} />
+
       <View style={{ height: 100 }} />
     </ScrollView>
   );
@@ -158,14 +192,14 @@ const styles = StyleSheet.create({
   },
   dropdownBox: {
     flex: 0.45,
-    height: 48,
+    height: 40,
     borderWidth: 1,
     borderColor: '#D1D5DB',
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: 5,
     backgroundColor: '#FFF',
   },
   dropdownText: {
@@ -217,5 +251,30 @@ const styles = StyleSheet.create({
     fontSize: 12.5,
     color: '#666',
     marginBottom: 12,
+  },
+  dropdownSelectedText: {
+    fontSize: 14,
+    color: '#000',
+  },
+  dropdownSearchInput: {
+    height: 50,
+    fontSize: 14,
+  },
+  dropdownContainer: {
+    backgroundColor: '#FFF',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    marginTop: -30,
+    paddingTop: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  dropdownItemText: {
+    fontSize: 14,
+    color: '#000',
   },
 });

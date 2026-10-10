@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, ScrollView, TextInput as RNTextInput } from 'react-native';
 import { Text } from '../ui/Text';
+import { useAppDispatch, useAppSelector } from '../../stores/hooks';
+import { updateJobPostData } from '../../stores/slices/jobPostSlice';
 
 export const Step3JobDescription = () => {
-  const [description, setDescription] = useState('');
+  const dispatch = useAppDispatch();
+  const description = useAppSelector((state) => state.jobPost.jobDescription);
   const maxLength = 500;
+
+  const handleDescriptionChange = (text: string) => {
+    dispatch(updateJobPostData({ jobDescription: text }));
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -19,7 +26,7 @@ export const Step3JobDescription = () => {
           multiline={true}
           textAlignVertical="top"
           value={description}
-          onChangeText={setDescription}
+          onChangeText={handleDescriptionChange}
           maxLength={maxLength}
           placeholder=""
         />

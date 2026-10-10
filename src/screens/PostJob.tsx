@@ -8,16 +8,25 @@ import { Step1JobDetails } from '../components/post_job/Step1JobDetails';
 import { Step2CandidatePreferences } from '../components/post_job/Step2CandidatePreferences';
 import { Step3JobDescription } from '../components/post_job/Step3JobDescription';
 import { Check } from 'lucide-react-native';
+import { useAppSelector } from '../stores/hooks';
+
+const JOB_STEPS = [
+  { id: 1, label: 'Job Details' },
+  { id: 2, label: 'Candidate Preferences' },
+  { id: 3, label: 'Job Description' }
+];
 
 export const PostJob: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const { colors } = useTheme();
+  const formData = useAppSelector((state) => state.jobPost);
 
   const handleNext = () => {
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Post Job API call here
+      console.log('--- Submitting Job Post ---');
+      console.log(JSON.stringify(formData, null, 2));
       navigation.goBack();
     }
   };
@@ -52,36 +61,33 @@ export const PostJob: React.FC<{ navigation: any }> = ({ navigation }) => {
         <View style={styles.progressSection}>
           <Text weight="semiBold" style={styles.title}>Post a Job</Text>
           <View style={styles.progressBar}>
-            <View style={styles.stepWrapper}>
-              <View style={[styles.stepDot, currentStep >= 1 && styles.stepDotActive, currentStep > 1 && styles.stepDotCompleted]}>
-                {currentStep > 1 ? <Check size={14} color="#FFF" /> : <Text style={styles.stepText}>1</Text>}
-              </View>
-              {currentStep === 1 && (
-                <Text weight="medium" style={[styles.stepLabelAbsolute, styles.stepLabel1]}>Job Details</Text>
-              )}
-            </View>
-            
-            <View style={[styles.line, currentStep >= 2 && styles.lineActive]} />
-            
-            <View style={styles.stepWrapper}>
-              <View style={[styles.stepDot, currentStep >= 2 && styles.stepDotActive, currentStep > 2 && styles.stepDotCompleted]}>
-                {currentStep > 2 ? <Check size={14} color="#FFF" /> : <Text style={styles.stepText}>2</Text>}
-              </View>
-              {currentStep === 2 && (
-                <Text weight="medium" style={[styles.stepLabelAbsolute, styles.stepLabel2]}>Candidate Preferences</Text>
-              )}
-            </View>
-            
-            <View style={[styles.line, currentStep >= 3 && styles.lineActive]} />
-            
-            <View style={styles.stepWrapper}>
-              <View style={[styles.stepDot, currentStep >= 3 && styles.stepDotActive]}>
-                <Text style={styles.stepText}>3</Text>
-              </View>
-              {currentStep === 3 && (
-                <Text weight="medium" style={[styles.stepLabelAbsolute, styles.stepLabel3]}>Job Description</Text>
-              )}
-            </View>
+            {JOB_STEPS.map((step, index) => {
+              const isLast = index === JOB_STEPS.length - 1;
+              const isActive = currentStep >= step.id;
+              const isCompleted = currentStep > step.id;
+              
+              // Pick alignment style based on position (left for first, right for last, center for middle)
+              const labelStyle = step.id === 1 ? styles.stepLabel1 : step.id === 3 ? styles.stepLabel3 : styles.stepLabel2;
+
+              return (
+                <React.Fragment key={step.id}>
+                  <View style={styles.stepWrapper}>
+                    <View style={[styles.stepDot, isActive && styles.stepDotActive, isCompleted && styles.stepDotCompleted]}>
+                      {isCompleted ? <Check size={14} color="#FFF" /> : <Text style={styles.stepText}>{step.id}</Text>}
+                    </View>
+                    {currentStep === step.id && (
+                      <Text weight="medium" style={[styles.stepLabelAbsolute, labelStyle]}>
+                        {step.label}
+                      </Text>
+                    )}
+                  </View>
+                  
+                  {!isLast && (
+                    <View style={[styles.line, currentStep >= step.id + 1 && styles.lineActive]} />
+                  )}
+                </React.Fragment>
+              );
+            })}
           </View>
           <View style={styles.divider} />
         </View>
