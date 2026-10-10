@@ -6,6 +6,7 @@ export interface UserData {
   email: string;
   full_name?: string;
   phone?: string;
+  is_recruiter?: boolean;
 }
 
 interface AuthContextType {

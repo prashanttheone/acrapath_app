@@ -25,6 +25,7 @@ export const Step1JobDetails = () => {
   const [showCustomPerkInput, setShowCustomPerkInput] = useState(false);
   const [customPerk, setCustomPerk] = useState('');
   const [addedCustomPerks, setAddedCustomPerks] = useState<string[]>([]);
+  const [newLocation, setNewLocation] = useState('');
 
   const toggleJobType = (type: string) => {
     if (jobType.includes(type)) dispatch(updateJobPostData({ jobType: jobType.filter(t => t !== type) }));
@@ -39,6 +40,19 @@ export const Step1JobDetails = () => {
   const togglePerk = (perk: string) => {
     if (perks.includes(perk)) dispatch(updateJobPostData({ perks: perks.filter(p => p !== perk) }));
     else dispatch(updateJobPostData({ perks: [...perks, perk] }));
+  };
+
+  const removeLocation = (loc: string) => {
+    dispatch(updateJobPostData({ location: location.filter(l => l !== loc) }));
+  };
+
+  const handleAddLocation = () => {
+    if (newLocation.trim()) {
+      if (!location.includes(newLocation.trim())) {
+        dispatch(updateJobPostData({ location: [...location, newLocation.trim()] }));
+      }
+      setNewLocation('');
+    }
   };
 
   const handleAddCustomPerk = () => {
@@ -106,7 +120,39 @@ export const Step1JobDetails = () => {
       <View style={styles.divider} />
 
       <Text weight="medium" style={styles.sectionTitle}>Location</Text>
-      <Text weight="medium" style={styles.description}>Let candidate know they will work</Text>
+      <Text weight="medium" style={styles.description}>Let candidates know where they will work</Text>
+      
+      {location.length > 0 && (
+        <View style={styles.pillContainer}>
+          <View style={styles.pillRow}>
+            {location.map((loc, index) => (
+              <Pill
+                key={`loc-${index}`}
+                label={loc}
+                selected={true}
+                onPress={() => removeLocation(loc)}
+                showActionIcon={true}
+              />
+            ))}
+          </View>
+        </View>
+      )}
+
+      <View style={styles.customPerkContainer}>
+        <TextInput
+          placeholder="Type a city (e.g. Mumbai)"
+          value={newLocation}
+          onChangeText={setNewLocation}
+          onSubmitEditing={handleAddLocation}
+          style={styles.customPerkInput}
+        />
+        <TouchableOpacity 
+          style={styles.addPerkButton}
+          onPress={handleAddLocation}
+        >
+          <Text style={styles.addPerkText}>Add</Text>
+        </TouchableOpacity>
+      </View>
 
       <Text weight="medium" style={styles.sectionTitle}>Work Mode *</Text>
       <View style={styles.pillContainer}>

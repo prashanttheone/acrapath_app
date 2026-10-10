@@ -38,6 +38,7 @@ export const Signup: React.FC<{ navigation: any }> = ({ navigation }) => {
           userId: response.data.userId,
           email: response.data.email,
           full_name: response.data.full_name,
+          is_recruiter: response.data.is_recruiter,
         });
       }
     } catch (error: any) {

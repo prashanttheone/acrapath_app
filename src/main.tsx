@@ -8,13 +8,14 @@ import { Login } from './components/auth/Login';
 import { Signup } from './components/auth/Signup';
 import { Home } from './screens/Home';
 import { PostJob } from './screens/PostJob';
+import { CandidateDashboard } from './screens/CandidateDashboard';
 import { useAuth } from './app/provider/AuthProvider';
 
 const Stack = createNativeStackNavigator();
 
 export const Main = () => {
   const { isDark } = useTheme();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
     return null; // Could be a splash screen
@@ -31,10 +32,16 @@ export const Main = () => {
           }}
         >
           {isAuthenticated ? (
-            <>
-              <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="PostJob" component={PostJob} />
-            </>
+            user?.is_recruiter ? (
+              <>
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="PostJob" component={PostJob} />
+              </>
+            ) : (
+              <>
+                <Stack.Screen name="CandidateDashboard" component={CandidateDashboard} />
+              </>
+            )
           ) : (
             <>
               <Stack.Screen name="Login" component={Login} />

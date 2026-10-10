@@ -6,7 +6,7 @@ export interface JobPostState {
   jobTitle: string;
   jobRole: string;
   jobType: string[];
-  location: string;
+  location: string[];
   workMode: string[];
   minSalary: string;
   maxSalary: string;
@@ -29,7 +29,7 @@ const initialState: JobPostState = {
   jobTitle: '',
   jobRole: '',
   jobType: ['Full-time'],
-  location: '',
+  location: [],
   workMode: ['Onsite'],
   minSalary: '',
   maxSalary: '',
