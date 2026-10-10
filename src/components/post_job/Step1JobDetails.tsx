@@ -141,8 +141,9 @@ export const Step1JobDetails = () => {
       )}
 
       <View style={styles.customPerkContainer}>
-        <TextInput
+        <RNTextInput
           placeholder="Type a city (e.g. Mumbai)"
+          placeholderTextColor="#999"
           value={newLocation}
           onChangeText={setNewLocation}
           onSubmitEditing={handleAddLocation}

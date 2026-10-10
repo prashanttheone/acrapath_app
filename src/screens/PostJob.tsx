@@ -191,8 +191,8 @@ export const PostJob: React.FC<{ navigation: any }> = ({ navigation }) => {
             onPress={handleBack} 
             variant="outline"
             textStyle={{ color: '#000000' }}
-            style={[styles.btn, currentStep === 1 && { opacity: 0 }]} 
-            disabled={currentStep === 1 || isSubmitting}
+            style={styles.btn} 
+            disabled={isSubmitting}
           />
           <Button 
             title={currentStep === 3 ? (isSubmitting ? "Posting..." : "Post Job") : "Next"} 
