@@ -1,5 +1,5 @@
 export const typography = {
-  primary: 'Poppins-Regular',
+  regular: 'Poppins-Regular',
   medium: 'Poppins-Medium',
   semiBold: 'Poppins-SemiBold',
   bold: 'Poppins-Bold',
