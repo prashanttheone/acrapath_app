@@ -7,6 +7,7 @@ import { useTheme } from './theme/useTheme';
 import { Login } from './components/auth/Login';
 import { Signup } from './components/auth/Signup';
 import { Home } from './screens/Home';
+import { PostJob } from './screens/PostJob';
 import { useAuth } from './app/provider/AuthProvider';
 
 const Stack = createNativeStackNavigator();
@@ -30,7 +31,10 @@ export const Main = () => {
           }}
         >
           {isAuthenticated ? (
-            <Stack.Screen name="Home" component={Home} />
+            <>
+              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="PostJob" component={PostJob} />
+            </>
           ) : (
             <>
               <Stack.Screen name="Login" component={Login} />

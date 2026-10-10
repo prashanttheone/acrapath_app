@@ -3,23 +3,32 @@ import { TextInput as RNTextInput, TextInputProps as RNTextInputProps, StyleShee
 import { Text } from './Text';
 import { useTheme } from '../../theme/useTheme';
 import { typography } from '../../theme/typography';
+import { Info } from 'lucide-react-native';
 
 interface TextInputProps extends RNTextInputProps {
   label?: string;
   error?: string;
   isPassword?: boolean;
+  showInfoIcon?: boolean;
+  rightElement?: React.ReactNode;
 }
 
-export const TextInput: React.FC<TextInputProps> = ({ label, error, isPassword, secureTextEntry, style, ...props }) => {
+export const TextInput: React.FC<TextInputProps> = ({ label, error, isPassword, secureTextEntry, style, onFocus, onBlur, showInfoIcon, rightElement, ...props }) => {
   const { colors } = useTheme();
   const [isSecure, setIsSecure] = useState(isPassword || secureTextEntry);
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <View style={styles.container}>
       {label && (
-        <Text weight="medium" style={[styles.label, { color: colors.textSecondary }]}>
-          {label}
-        </Text>
+        <View style={styles.labelRow}>
+          <Text weight="medium" style={[styles.label, { color: '#4D4D4D' }]}>
+            {label}
+          </Text>
+          {showInfoIcon && (
+            <Info color="#4D4D4D" size={16} />
+          )}
+        </View>
       )}
       <View style={styles.inputContainer}>
         <RNTextInput
@@ -28,7 +37,7 @@ export const TextInput: React.FC<TextInputProps> = ({ label, error, isPassword, 
             { 
               backgroundColor: colors.inputBackground,
               color: colors.text,
-              borderColor: error ? '#FF3B30' : colors.border,
+              borderColor: error ? '#FF3B30' : isFocused ? '#000000' : colors.border,
               fontFamily: typography.regular,
               paddingRight: (isPassword || secureTextEntry) ? 48 : 16,
             },
@@ -36,6 +45,14 @@ export const TextInput: React.FC<TextInputProps> = ({ label, error, isPassword, 
           ]}
           placeholderTextColor={colors.textSecondary}
           secureTextEntry={isSecure}
+          onFocus={(e) => {
+            setIsFocused(true);
+            onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            onBlur?.(e);
+          }}
           {...props}
         />
         {(isPassword || secureTextEntry) && (
@@ -47,6 +64,11 @@ export const TextInput: React.FC<TextInputProps> = ({ label, error, isPassword, 
               {isSecure ? '👁️' : '🙈'}
             </Text>
           </TouchableOpacity>
+        )}
+        {rightElement && (
+          <View style={styles.rightElementContainer}>
+            {rightElement}
+          </View>
         )}
       </View>
       {error && (
@@ -60,9 +82,29 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
   },
-  label: {
+  labelRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 8,
+  },
+  label: {
     fontSize: 14,
+  },
+  infoIcon: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#4D4D4D',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  infoIconText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#4D4D4D',
+    fontStyle: 'italic',
   },
   inputContainer: {
     position: 'relative',
@@ -76,6 +118,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   eyeIcon: {
+    position: 'absolute',
+    right: 16,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rightElementContainer: {
     position: 'absolute',
     right: 16,
     height: '100%',

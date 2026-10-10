@@ -1,14 +1,15 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, TouchableOpacityProps, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, StyleSheet, TouchableOpacityProps, ActivityIndicator, StyleProp, TextStyle } from 'react-native';
 import { Text } from './Text';
 import { useTheme } from '../../theme/useTheme';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   loading?: boolean;
+  textStyle?: StyleProp<TextStyle>;
 }
 
-export const Button: React.FC<ButtonProps> = ({ title, loading, style, disabled, ...props }) => {
+export const Button: React.FC<ButtonProps> = ({ title, loading, style, textStyle, disabled, ...props }) => {
   const { colors } = useTheme();
 
   return (
@@ -25,7 +26,7 @@ export const Button: React.FC<ButtonProps> = ({ title, loading, style, disabled,
       {loading ? (
         <ActivityIndicator color={colors.buttonText} />
       ) : (
-        <Text weight="bold" style={[styles.text, { color: colors.buttonText }]}>
+        <Text weight="semiBold" style={[styles.text, { color: colors.buttonText }, textStyle]}>
           {title}
         </Text>
       )}
