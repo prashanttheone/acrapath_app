@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   description: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#666',
     marginBottom: 20,
   },
