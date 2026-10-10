@@ -58,7 +58,7 @@ export const CandidateDashboard = ({ navigation }: any) => {
         <Text weight="semiBold" style={styles.greeting}>Hey {user?.full_name?.split(' ')[0] || 'Candidate'},</Text>
         <Text weight="bold" style={styles.title}>Find your dream job</Text>
 
-        <JobSearchForm onSearch={() => navigation.navigate('Jobs')} />
+        <JobSearchForm onSearch={() => navigation.navigate('CandidateTabs', { screen: 'Jobs' })} />
       </View>
 
       {/* Profile Modal */}

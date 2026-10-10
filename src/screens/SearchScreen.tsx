@@ -22,7 +22,7 @@ export const SearchScreen = ({ navigation }: any) => {
         <Text weight="bold" style={styles.greeting}>Hey {firstName},</Text>
         <Text weight="medium" style={styles.subtitle}>Find your dream job</Text>
 
-        <JobSearchForm onSearch={() => navigation.goBack()} />
+        <JobSearchForm onSearch={() => navigation.navigate('CandidateTabs', { screen: 'Jobs' })} />
 
       </ScrollView>
     </SafeAreaView>

@@ -40,8 +40,8 @@ export const JobSearchForm: React.FC<JobSearchFormProps> = ({
 
   const handleSearch = () => {
     dispatch(setFilter({
-      skills: skills ? [skills] : undefined,
-      location: locations || undefined,
+      skills: skills ? [skills] : [],
+      location: locations || '',
     }));
     if (onSearch) {
       onSearch();
