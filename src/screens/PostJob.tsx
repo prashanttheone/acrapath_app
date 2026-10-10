@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, Image, Alert, ToastAndroid } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../components/ui/Text';
 import { Button } from '../components/ui/Button';
@@ -22,9 +22,38 @@ export const PostJob: React.FC<{ navigation: any }> = ({ navigation }) => {
   const formData = useAppSelector((state) => state.jobPost);
 
   const handleNext = () => {
+    const showError = () => {
+      if (Platform.OS === 'android') {
+        ToastAndroid.showWithGravity('Please fill all required fields marked with *', ToastAndroid.LONG, ToastAndroid.TOP);
+      } else {
+        Alert.alert('Validation Error', 'Please fill all required fields marked with *');
+      }
+    };
+
+    // Validation
+    if (currentStep === 1) {
+      if (
+        !formData.companyName.trim() ||
+        !formData.jobTitle.trim() ||
+        !formData.jobRole.trim() ||
+        formData.jobType.length === 0 ||
+        formData.workMode.length === 0 ||
+        formData.perks.length === 0
+      ) {
+        showError();
+        return;
+      }
+    } else if (currentStep === 2) {
+      if (!formData.qualification.trim() || formData.skills.length === 0) {
+        showError();
+        return;
+      }
+    }
+
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     } else {
+      // Step 3 doesn't have required fields marked with * currently, but if there were we'd check them.
       console.log('--- Submitting Job Post ---');
       console.log(JSON.stringify(formData, null, 2));
       navigation.goBack();
