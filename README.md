@@ -1,97 +1,145 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# AcraPath Mobile Application
 
-# Getting Started
+[![React Native](https://img.shields.io/badge/React%20Native-0.87.1-61DAFB?style=flat-square&logo=react&logoColor=black)](https://reactnative.dev)
+[![React](https://img.shields.io/badge/React-19.2.3-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0.3-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Redux Toolkit](https://img.shields.io/badge/Redux%20Toolkit-2.13.0-764ABC?style=flat-square&logo=redux&logoColor=white)](https://redux-toolkit.js.org)
+[![TanStack Query](https://img.shields.io/badge/TanStack%20Query-v5-FF4154?style=flat-square&logo=reactquery&logoColor=white)](https://tanstack.com/query)
+[![PostHog](https://img.shields.io/badge/PostHog-Analytics-1D63FF?style=flat-square&logo=posthog&logoColor=white)](https://posthog.com)
+[![Version](https://img.shields.io/badge/Version-2.3.0-success?style=flat-square)](#)
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+> **Lead Developer**: **Prashant Kumar** | **Application ID**: `com.acrapath`
 
-## Step 1: Start Metro
+---
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 📌 Project Overview
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+**AcraPath** is a high-performance cross-platform recruitment platform built with **React Native (0.87.1)** and **React 19**. It features a unified dual-mode experience connecting job seekers (**Candidates**) and employers (**Recruiters**).
 
-```sh
-# Using npm
-npm start
+### Core Features
+- **Dual-Role Switching**: Seamless toggle between Candidate and Recruiter modes with dynamic navigation.
+- **Candidate Hub**: Search bar with suggestion autocomplete, dynamic filter drawer, infinite scrolling job feed with skeleton loaders, and detailed role specifications.
+- **Recruiter Wizard**: 3-step structured job posting flow (Details, Preferences, Description), multi-location support, and salary confidentiality settings.
+- **Security & Analytics**: Hardware-backed token encryption via `react-native-keychain`, centralized Axios interceptors, and PostHog session replay & analytics.
 
-# OR using Yarn
-yarn start
+---
+
+## 🏗️ Architecture & Tech Stack
+
+```
+[ Presentation Layer ]  React 19, React Native 0.87.1, React Navigation v7, Lucide Icons
+          │
+[ State & Sync Layer ]  Redux Toolkit (jobPostSlice, jobFilterSlice) + TanStack Query v5
+          │
+[ Network & Security ]  apiClient (Axios Interceptors) + react-native-keychain (JWT)
+          │
+[ Backend Services ]   REST API (https://acrapathapi.schooldb.in) + PostHog Analytics
 ```
 
-## Step 2: Build and run your app
+- **Navigation**: Dual-stack routing in `src/main.tsx` (Candidate Bottom Tabs vs. Recruiter Stack).
+- **Client Cache**: TanStack React Query v5 handles server pagination and caching (`useJobs`, `useJobDetails`).
+- **Form State**: Redux Toolkit manages multi-step posting and active search filter criteria.
+- **Centralized API**: Routes registered in `src/app/lib/EndPoint.ts`, executed through `src/app/lib/apiClient.ts` with auto-injected Bearer tokens.
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+---
 
-### Android
+## ⚙️ Environment Configuration
 
-```sh
-# Using npm
+Define the following in your root `.env` file:
+
+```env
+API_URL=https://acrapathapi.schooldb.in
+POSTHOG_API_KEY=phc_t8sYLHCCUPij9ouFk6zk576GMqHjowudUig2Sj6Cnmiy
+POSTHOG_HOST=https://eu.i.posthog.com
+```
+
+| Variable | Description |
+| :--- | :--- |
+| `API_URL` | Base endpoint for the AcraPath REST API |
+| `POSTHOG_API_KEY` | Public key for PostHog event tracking |
+| `POSTHOG_HOST` | PostHog telemetry ingestion host |
+
+---
+
+## 🚀 Setup & Run
+
+### 1. Prerequisites
+- **Node.js**: `>= 22.11.0` | **Java**: JDK 17
+- **Android**: Android Studio, Android SDK (API 34+), Build-Tools 37.0.0
+- **iOS** (macOS): Xcode 15+, CocoaPods & Bundler
+
+### 2. Installation
+```bash
+npm install
+
+# For iOS only:
+bundle install && bundle exec pod install --project-directory=ios
+```
+
+### 3. Start Metro Bundler
+```bash
+npm start
+# To reset cache if needed:
+npm start -- --reset-cache
+```
+
+### 4. Run Application
+```bash
+# Android (Emulator or connected USB device)
 npm run android
 
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+# iOS (Simulator)
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### 5. Production Builds
+```bash
+# Android Release APK
+cd android && ./gradlew assembleRelease
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+# Android App Bundle (AAB for Play Store)
+cd android && ./gradlew bundleRelease
+```
 
-## Step 3: Modify your app
+---
 
-Now that you have successfully run the app, let's make changes!
+## 🤖 Multi-Agent Run & AI Assistant Workflow
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+AcraPath supports autonomous multi-agent development workflows (Antigravity, GSD, pair-programming agents). Follow these operational boundaries:
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+### Agent Responsibilities
+| Agent Domain | Scope | Constraints |
+| :--- | :--- | :--- |
+| **UI Agent** | `src/components/`, `src/screens/` | Functional components only, use `useTheme` design tokens, responsive layouts. |
+| **State Agent** | `src/stores/` | Pure Redux reducers, typed actions, avoid side-effects in slices. |
+| **API Agent** | `src/app/lib/`, `src/hooks/` | Register routes in `EndPoint.ts`, use TanStack Query hooks, token via Keychain. |
+| **Native Agent** | `android/`, `ios/` | Maintain Gradle dependencies, SDK versions, and signing configurations. |
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+### Quality Gates for AI Execution
+Run before submitting code changes:
+```bash
+npm run lint         # Check code quality and style
+npx tsc --noEmit     # Verify TypeScript types
+npm test             # Run test suites
+```
 
-## Congratulations! :tada:
+---
 
-You've successfully run and modified your React Native App. :partying_face:
+## 🔗 Key Endpoints & Troubleshooting
 
-### Now what?
+- `auth`: `/api/auth/login`, `/api/auth/register`
+- `jobs`: `/api/jobs` (create & paginated list), `/api/jobs/:id` (details)
+- `search`: `/api/locations/suggest`, `/api/keywords/suggest`
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+| Issue | Quick Fix |
+| :--- | :--- |
+| **Metro bundler stale cache** | Run `npm start -- --reset-cache` |
+| **Gradle lock or build failure** | Run `cd android && ./gradlew clean --stop && cd ..` |
+| **Keychain reinstall error** | Uninstall existing debug APK from device before reinstalling |
 
-# Troubleshooting
+---
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## 👨‍💻 Author
 
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- **Developer**: **Prashant Kumar**
+- **Project**: AcraPath Mobile (`v2.3.0`)
